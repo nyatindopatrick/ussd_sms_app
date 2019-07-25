@@ -1,11 +1,37 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+const smsSchema = new mongoose.Schema({
+	name: String,
+	contact: String
+})
+
+
+
+// app.post(`/insert`,(req,res)=>{
+// 	const data = new test(req.body);
+// 	data.save().then(result=>{
+// 		res.send(result)
+// 	})
+// 	.catch((err)=>{
+// 		res.send(err);ß
+// 	})
+// })
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+// const test = mongoose.model('test', smsSchema);
 
 app.post('/send_sms', (req, res) => {
+	let phone_number = req.body.phone_number;
+	let message = req.body.message;
+	console.log(phone_number, message);
 	const options = {
-		username: 'loopedin',
-		apiKey: '7309123852693bc2a7112f239eccc42521f2e4a0b134af8a0b6fe8935fa93efb'
+		username: 'nyatindopatrick',
+		apiKey: 'e6e3841614997d2e6e87e29d1f0bfad4fe3e937c5317f9ad11b5effabde21bdc'
 	};
 
 	// initialize africastalking gateway
@@ -16,9 +42,9 @@ app.post('/send_sms', (req, res) => {
 
 	// sending parameters
 	const sending_options = {
-		to: ['0726158347','0718714785', '0773787543'],
-		message: 'Hey guys this is a test message from LH Academy',
-		from: 'LakeHub'
+		to: phone_number,
+		message: message,
+		// from: 'Parto'
 	};
 
 	// send sms
@@ -32,7 +58,9 @@ app.post('/send_sms', (req, res) => {
 		res.send(error);
 	});
 });
+mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true}).then(()=>{
+        app.listen(port, () => console.log(`Academy app running on port ${port}`))
+}).catch(error=>console.log(error));
 
 
-app.listen(port, () => console.log(`Academy app running on port ${port}`));
 
